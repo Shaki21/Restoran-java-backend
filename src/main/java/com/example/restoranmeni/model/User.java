@@ -1,5 +1,6 @@
 package com.example.restoranmeni.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -18,13 +19,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String username;
+
     private String password;
 
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @JsonManagedReference
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Employee employee;
 

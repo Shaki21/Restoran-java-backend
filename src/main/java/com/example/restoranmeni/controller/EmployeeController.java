@@ -5,6 +5,7 @@ import com.example.restoranmeni.model.User;
 import com.example.restoranmeni.services.EmployeeService;
 import com.example.restoranmeni.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,9 +23,20 @@ public class EmployeeController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
-        Employee createdEmployee = employeeService.createEmployee(employee);
-        return ResponseEntity.ok(createdEmployee);
+    public ResponseEntity<?> createEmployee(@RequestBody Employee employee, @RequestParam String username) {
+        try {
+            User user = userService.findByUsername(username);
+            if (user == null) {
+                return ResponseEntity.badRequest().body("User with given username does not exist");
+            }
+            employee.setUser(user);
+            employee.setUsername(user.getUsername()); // set username from User
+            employee.setRole(user.getRole()); // set role from User
+            Employee createdEmployee = employeeService.createEmployee(employee);
+            return ResponseEntity.ok(createdEmployee);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
@@ -36,9 +48,14 @@ public class EmployeeController {
         return ResponseEntity.ok(employee);
     }
 
+
     @GetMapping
     public ResponseEntity<List<Employee>> getAllEmployees() {
         List<Employee> employees = employeeService.findAll();
+        for (Employee employee : employees) {
+            employee.setUsername(employee.getUser().getUsername());
+            employee.setRole(employee.getUser().getRole());
+        }
         return ResponseEntity.ok(employees);
     }
 
@@ -48,9 +65,8 @@ public class EmployeeController {
         if (employee == null) {
             return ResponseEntity.notFound().build();
         }
-        employee.setName(employeeDetails.getName());
-        employee.setSalary(employeeDetails.getSalary());
-        employee.setPosition(employeeDetails.getPosition());
+        employee.setFirstname(employeeDetails.getFirstname());
+        employee.setLastname(employeeDetails.getLastname());
         Employee updatedEmployee = employeeService.updateEmployee(employee);
         return ResponseEntity.ok(updatedEmployee);
     }
