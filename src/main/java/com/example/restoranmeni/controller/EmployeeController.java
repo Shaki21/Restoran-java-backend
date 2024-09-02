@@ -35,7 +35,7 @@ public class EmployeeController {
             Employee createdEmployee = employeeService.createEmployee(employee);
             return ResponseEntity.ok(createdEmployee);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
         }
     }
 
@@ -72,12 +72,12 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
+    public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
         Employee employee = employeeService.findById(id);
         if (employee == null) {
             return ResponseEntity.notFound().build();
         }
         employeeService.deleteEmployee(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("User deleted successfully");
     }
 }
