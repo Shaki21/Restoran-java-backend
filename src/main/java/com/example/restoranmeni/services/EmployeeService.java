@@ -13,16 +13,16 @@ public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    public Employee findByUsername(String username) {
+        return employeeRepository.findByUserUsername(username).orElse(null);
+    }
+
     public Employee createEmployee(Employee employee) {
         return employeeRepository.save(employee);
     }
 
     public Employee updateEmployee(Employee employee) {
         return employeeRepository.save(employee);
-    }
-
-    public void deleteEmployee(Long id) {
-        employeeRepository.deleteById(id);
     }
 
     public Employee findById(Long id) {
@@ -32,4 +32,9 @@ public class EmployeeService {
     public List<Employee> findAll() {
         return employeeRepository.findAll();
     }
+
+    public void deleteEmployee(Long id) {
+        employeeRepository.deleteById(id);
+    }
 }
+

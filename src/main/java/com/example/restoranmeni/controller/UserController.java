@@ -1,5 +1,6 @@
 package com.example.restoranmeni.controller;
 
+import com.example.restoranmeni.model.Role;
 import com.example.restoranmeni.model.User;
 import com.example.restoranmeni.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
         try {
+            if (user.getRole() == null) {
+                user.setRole(Role.USER);
+            }
             User createdUser = userService.createUser(user);
             return ResponseEntity.ok(createdUser);
         } catch (DataIntegrityViolationException e) {

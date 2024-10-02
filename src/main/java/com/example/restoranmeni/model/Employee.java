@@ -19,14 +19,18 @@ public class Employee {
 
     private String firstname;
     private String lastname;
-    private Integer salary;
-    private String position;
 
-    @Column(insertable = false, updatable = false)
-    private String username; // add this field
+    // Adding position field.
+    // When you set the position, the salary will be set automatically.
+    @Enumerated(EnumType.STRING)
+    private Position position;
+    private int salary;
 
-    @Enumerated(EnumType.STRING) // add this annotation
-    private Role role; // add this field
+    public void setPosition(Position position) {
+        this.position = position;
+        this.salary = position.getSalary();
+    }
+
 
     @JsonBackReference
     @OneToOne
